@@ -6,6 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'denv'
+gem 'faye-websocket'
 gem 'slack-ruby-client'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
