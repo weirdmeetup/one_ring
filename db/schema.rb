@@ -16,6 +16,8 @@ ActiveRecord::Schema.define(version: 20171018115309) do
     t.string "cid", null: false
     t.string "name", null: false
     t.string "master", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "warned_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

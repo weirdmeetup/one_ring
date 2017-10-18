@@ -4,6 +4,8 @@ class CreateChannels < ActiveRecord::Migration[5.1]
       t.string :cid, null: false
       t.string :name, null: false
       t.string :master, null: false
+      t.boolean :active, null: false, default: true
+      t.datetime :warned_at
 
       t.timestamps
     end
