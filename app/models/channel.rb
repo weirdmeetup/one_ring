@@ -1,7 +1,13 @@
 require 'slack_client'
 
 class Channel < ApplicationRecord
+  WARNING_LIMIT = 7.days.ago
+  ACHIVING_LIMIT = 23.days.ago
+
   has_many :messages
+
+  scope :alive, -> { where(active: true) }
+  scope :achiving_candidate, -> { alive.where('warned_at < ?', Channel::ACHIVING_LIMIT) }
 
   def self.init_with(params)
     channel = new(params).tap do |obj|
@@ -12,6 +18,20 @@ class Channel < ApplicationRecord
       api_client.channels_invite(channel: obj.cid, user: bot_client.auth_test.user_id)
       bot_client.chat_postMessage(channel: obj.cid, text: "<#{obj.master}>님, 요청하신 채널이 생성되었습니다.")
     end
+  end
+
+  def last_message
+    messages.order(id: :desc).first
+  end
+
+  def inactive_candidate?
+    last_message = channel.last_message
+    !last_message || last_message.created_at < Channel::WARNING_LIMIT
+  end
+
+  def inactive?
+    last_message = channel.last_message
+    !last_message || last_message.created_at < Channel::ACHIVING_LIMIT
   end
 
   def archive
