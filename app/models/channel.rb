@@ -10,6 +10,7 @@ class Channel < ApplicationRecord
       obj.cid = resp.id
       bot_client = SlackClient.build_bot_client
       api_client.channels_invite(channel: obj.cid, user: bot_client.auth_test.user_id)
+      bot_client.chat_postMessage(channel: obj.cid, text: "<#{obj.master}>님, 요청하신 채널이 생성되었습니다.")
     end
   end
 
