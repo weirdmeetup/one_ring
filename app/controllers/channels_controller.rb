@@ -24,7 +24,7 @@ class ChannelsController < ApplicationController
   # POST /channels
   # POST /channels.json
   def create
-    @channel = Channel.new(channel_params)
+    @channel = Channel.init_with(channel_params)
 
     if @channel.save
       redirect_to @channel, notice: 'Channel was successfully created.'
@@ -47,7 +47,7 @@ class ChannelsController < ApplicationController
   # DELETE /channels/1.json
   def destroy
     @channel.archive
-    redirect_to channels_url, notice: 'Channel was successfully destroyed.'
+    redirect_to channels_url, notice: 'Channel was successfully archived.'
   end
 
   private
@@ -58,6 +58,6 @@ class ChannelsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def channel_params
-    params.require(:channel).permit(:cid, :name, :master)
+    params.require(:channel).permit(:name, :master)
   end
 end
