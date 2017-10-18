@@ -15,8 +15,7 @@ ActiveRecord::Schema.define(version: 20171016093731) do
   create_table "channels", force: :cascade do |t|
     t.string "cid", null: false
     t.string "name", null: false
-    t.string "master"
-    t.datetime "last_updated_at", null: false
+    t.string "master", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

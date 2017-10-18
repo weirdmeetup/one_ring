@@ -34,7 +34,7 @@ class ChannelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update channel" do
-    patch channel_url(@channel), params: { channel: { cid: @channel.cid, last_updated_at: @channel.last_updated_at, master: @channel.master, name: @channel.name } }
+    patch channel_url(@channel), params: { channel: { cid: @channel.cid, master: @channel.master, name: @channel.name } }
     assert_redirected_to channel_url(@channel)
   end
 

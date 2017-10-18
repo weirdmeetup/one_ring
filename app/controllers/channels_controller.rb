@@ -25,7 +25,6 @@ class ChannelsController < ApplicationController
   # POST /channels.json
   def create
     @channel = Channel.new(channel_params)
-    @channel.last_updated_at = Time.zone.now
 
     respond_to do |format|
       if @channel.save

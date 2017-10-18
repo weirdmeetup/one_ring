@@ -18,7 +18,6 @@ class SyncChannelsJob < ApplicationJob
         obj.name = ch.name
         obj.master = "Nobody"
       end
-      obj.last_updated_at = Time.zone.at(ch.latest.ts.to_i)
       obj.save
     end
   end
