@@ -8,6 +8,7 @@ end
 gem 'denv'
 gem 'faye-websocket'
 gem 'slack-ruby-client'
+gem 'whenever', require: false
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
