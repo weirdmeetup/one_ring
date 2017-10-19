@@ -31,6 +31,7 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
+gem 'faraday'
 gem 'faye-websocket'
 gem 'slack-ruby-client'
 gem 'whenever', require: false
