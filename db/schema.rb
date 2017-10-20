@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 20171018115309) do
 
-  create_table "channels", force: :cascade do |t|
+  create_table "channels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.string "cid", null: false
     t.string "name", null: false
     t.string "master", null: false
@@ -22,10 +22,10 @@ ActiveRecord::Schema.define(version: 20171018115309) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "messages", force: :cascade do |t|
+  create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.string "user", null: false
     t.text "text", null: false
-    t.integer "channel_id", null: false
+    t.bigint "channel_id", null: false
     t.text "raw", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
