@@ -9,7 +9,7 @@ client = Slack::RealTime::Client.new(token: ENV['SLACK_BOT_TOKEN'])
 
 client.on :message do |data|
   next if data.subtype
-  pp data
+  pp data if Rails.env.development?
 
   channel = Channel.find_by(cid: data.channel)
   Message.create(user: data.user, text: data.text, channel: channel, raw: data.to_json)
