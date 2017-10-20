@@ -21,6 +21,7 @@ test:
   database: db/test.sqlite3
 
 production:
+  adapter: mysql2
   url: <%= ENV["ONE_RING_DATABASE_URL"] %>
   encoding: utf8mb4
   charset: utf8mb4
