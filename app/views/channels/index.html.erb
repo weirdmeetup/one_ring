@@ -19,7 +19,6 @@
         <td><%= channel.master %></td>
         <td><%= channel.active %></td>
         <td><%= link_to 'Show', channel %></td>
-        <td><%= link_to 'Edit', edit_channel_path(channel) %></td>
         <td><%= link_to 'Archive', channel, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>

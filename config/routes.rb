@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
   root "channels#index"
-  resources :channels
+  resources :channels, except: [:edit, :update]
 end

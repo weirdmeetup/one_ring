@@ -2,13 +2,11 @@ class ChannelsController < ApplicationController
   before_action :set_channel, only: [:show, :edit, :update, :destroy]
 
   # GET /channels
-  # GET /channels.json
   def index
     @channels = Channel.all
   end
 
   # GET /channels/1
-  # GET /channels/1.json
   def show
   end
 
@@ -17,12 +15,7 @@ class ChannelsController < ApplicationController
     @channel = Channel.new
   end
 
-  # GET /channels/1/edit
-  def edit
-  end
-
   # POST /channels
-  # POST /channels.json
   def create
     @channel = Channel.init_with(channel_params)
 
@@ -33,18 +26,7 @@ class ChannelsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /channels/1
-  # PATCH/PUT /channels/1.json
-  def update
-    if @channel.update(channel_params)
-      redirect_to @channel, notice: 'Channel was successfully updated.'
-    else
-      render :edit
-    end
-  end
-
   # DELETE /channels/1
-  # DELETE /channels/1.json
   def destroy
     @channel.archive
     redirect_to channels_url, notice: 'Channel was successfully archived.'
