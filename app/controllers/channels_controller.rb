@@ -17,9 +17,9 @@ class ChannelsController < ApplicationController
 
   # POST /channels
   def create
-    @channel = Channel.init_with(channel_params)
+    @channel = Channel.new(channel_params)
 
-    if @channel.save
+    if @channel.save_with_slack
       redirect_to @channel, notice: 'Channel was successfully created.'
     else
       render :new
