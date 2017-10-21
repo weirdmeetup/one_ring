@@ -37,7 +37,7 @@ gem 'faye-websocket'
 gem 'slack-ruby-client'
 gem 'whenever', require: false
 
-gem 'omniauth-slack'
+gem 'omniauth-slack_signin'
 
 gem 'listen', '>= 3.0.5', '< 3.2'
 
