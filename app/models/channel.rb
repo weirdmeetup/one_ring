@@ -24,7 +24,12 @@ class Channel < ApplicationRecord
     messages.order(id: :desc).first
   end
 
+  def default_channel?
+    name.start_with?('_')
+  end
+
   def inactive_candidate?
+    return false if default_channel?
     last_message = channel.last_message
     !last_message || last_message.created_at < Channel::WARNING_LIMIT
   end
