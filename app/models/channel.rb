@@ -30,12 +30,10 @@ class Channel < ApplicationRecord
 
   def inactive_candidate?
     return false if default_channel?
-    last_message = channel.last_message
     !last_message || last_message.created_at < Channel::WARNING_LIMIT
   end
 
   def inactive?
-    last_message = channel.last_message
     !last_message || last_message.created_at < Channel::ACHIVING_LIMIT
   end
 

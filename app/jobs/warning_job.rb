@@ -1,7 +1,7 @@
 class WarningJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
+  def perform
     Channel.all.each do |channel|
       if channel.inactive_candidate?
         next if channel.warned_at # Ignore
