@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171021061327) do
+ActiveRecord::Schema.define(version: 20171021070958) do
 
   create_table "channels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.string "cid", null: false
@@ -33,4 +33,22 @@ ActiveRecord::Schema.define(version: 20171021061327) do
     t.index ["channel_id"], name: "index_messages_on_channel_id"
   end
 
+  create_table "secure_tokens", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.bigint "user_id", null: false
+    t.string "token", limit: 100, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_secure_tokens_on_user_id"
+  end
+
+  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.string "provider", limit: 20, null: false
+    t.string "uid", limit: 20, null: false
+    t.string "name", limit: 20, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider", "uid"], name: "user_uniq_provider_uid", unique: true
+  end
+
+  add_foreign_key "secure_tokens", "users"
 end
