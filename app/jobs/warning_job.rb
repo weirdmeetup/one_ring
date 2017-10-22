@@ -16,10 +16,10 @@ class WarningJob < ApplicationJob
         channel.update(warned_at: nil)
       end
     end
-    manage_client.chat_postMessage(channel: ENV['MANAGE_CHANNEL'], text: build_message(affected_channels), as_user:true)
+    manage_client.chat_postMessage(channel: '#' + ENV['MANAGE_CHANNEL'], text: build_message(affected_channels), as_user:true)
   rescue => e
     message = "There was some problem on 'WarningJob' execution\n#{e.message}\n#{e.backtrace.join("\n")}"
-    manage_client.chat_postMessage(channel: ENV['MANAGE_CHANNEL'], text: message, as_user:true)
+    manage_client.chat_postMessage(channel: '#' + ENV['MANAGE_CHANNEL'], text: message, as_user:true)
   end
 
   private
