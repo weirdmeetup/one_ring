@@ -3,6 +3,7 @@ require 'rails_helper'
 describe ArchivingJob, type: :job do
   let(:job) { described_class.new }
   let(:client) { double('SlackClient') }
+  let(:manage_client) { double('SlackClient') }
   let(:warned_at) { 30.days.ago }
   let!(:channel) do
     Channel.create(
@@ -17,6 +18,8 @@ describe ArchivingJob, type: :job do
   describe '#perform' do
     before do
       allow(SlackClient).to receive(:build_bot_client).and_return(client)
+      allow(SlackClient).to receive(:build_manage_client).and_return(manage_client)
+      allow(manage_client).to receive(:chat_postMessage)
     end
 
     context 'with target' do
@@ -33,6 +36,15 @@ describe ArchivingJob, type: :job do
       it 'do nothing' do
         expect(client).not_to receive(:chat_postMessage)
         job.perform
+      end
+    end
+
+    context 'with error' do
+      it 'send error information to manage slack' do
+        expect(client).to receive(:chat_postMessage).and_raise(StandardError)
+        expect {
+          job.perform
+        }.not_to raise_error
       end
     end
   end
