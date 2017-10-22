@@ -50,9 +50,12 @@ describe Channel, type: :model do
     let(:channel) do
       Channel.create(
         cid: 'cid',
-        name: 'channel',
+        name: channel_name,
         master: '@user'
       )
+    end
+    let(:channel_name) do
+      'channel'
     end
     let(:client) do
       double('SlackClient')
@@ -67,6 +70,57 @@ describe Channel, type: :model do
       channel.archive
       expect(channel.active).to eq(false)
       expect(channel.archived_at).to be <= Time.zone.now
+    end
+  end
+
+  describe '#inactive_candidate?' do
+    let(:channel) do
+      Channel.create(
+        cid: 'cid',
+        name: 'channel',
+        master: '@user',
+        created_at: created_at
+      )
+    end
+    let(:created_at) { nil }
+
+    context 'with no messages' do
+      let(:created_at) { 8.days.ago }
+
+      it 'returns true' do
+        expect(channel).to be_inactive_candidate
+      end
+    end
+
+    context 'with last message created 8 day' do
+      let(:created_at) { 8.days.ago }
+
+      it 'returns true' do
+        Message.create(
+          channel_id: channel.id,
+          user: 'user',
+          text: 'text',
+          raw: '',
+          created_at: 8.days.ago
+        )
+        expect(channel).to be_inactive_candidate
+      end
+    end
+
+    context 'with created in 7 days' do
+      let(:created_at) { 4.days.ago }
+
+      it 'returns false' do
+        expect(channel).not_to be_inactive_candidate
+      end
+    end
+
+    context 'with default channels' do
+      let(:channel_name) { '_general' }
+
+      it 'returns true' do
+        expect(channel).not_to be_inactive_candidate
+      end
     end
   end
 end

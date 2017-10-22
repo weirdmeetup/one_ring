@@ -13,7 +13,8 @@ describe WarningJob, type: :job do
       name: channel_name,
       master: '@user',
       active: 'true',
-      warned_at: warned_at
+      warned_at: warned_at,
+      created_at: 10.days.ago
     )
   end
 

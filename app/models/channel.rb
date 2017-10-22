@@ -35,6 +35,7 @@ class Channel < ApplicationRecord
 
   def inactive_candidate?
     return false if default_channel?
+    return false if created_at > 7.days.ago
     !last_message || last_message.created_at < Channel::WARNING_LIMIT
   end
 
