@@ -35,7 +35,7 @@ class ArchivingJob < ApplicationJob
       Affected Channel(#{channels.size}) => #{channels.map(&:name).join(', ')}
       EOS
     else
-      "WarningJob performed result: no affected channel"
+      "ArchivingJob performed result: no affected channel"
     end
   end
 end

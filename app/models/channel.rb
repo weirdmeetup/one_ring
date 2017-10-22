@@ -40,6 +40,7 @@ class Channel < ApplicationRecord
   end
 
   def inactive?
+    return false if warned_at.nil?
     !last_message || last_message.created_at < Channel::ACHIVING_LIMIT
   end
 

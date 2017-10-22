@@ -123,4 +123,62 @@ describe Channel, type: :model do
       end
     end
   end
+
+  describe '#inactive?' do
+    let(:channel) do
+      Channel.create(
+        cid: 'cid',
+        name: 'channel',
+        master: '@user',
+        warned_at: warned_at,
+        created_at: created_at
+      )
+    end
+    let(:warned_at) { nil }
+    let(:created_at) { nil }
+
+    context 'with active channel' do
+      it 'returns false' do
+        expect(channel).not_to be_inactive
+      end
+    end
+
+    context 'with warned & has message in 20 days channel' do
+      let(:warned_at) { 13.days.ago }
+
+      it 'returns true' do
+        Message.create(
+          channel_id: channel.id,
+          user: 'user',
+          text: 'text',
+          raw: '',
+          created_at: 20.days.ago
+        )
+        expect(channel).not_to be_inactive
+      end
+    end
+
+    context 'with warned & has no messages in 30 days channel' do
+      let(:warned_at) { 23.days.ago }
+
+      it 'returns true' do
+        expect(channel).to be_inactive
+      end
+    end
+
+    context 'with warned & has message in 35 days channel' do
+      let(:warned_at) { 29.days.ago }
+
+      it 'returns true' do
+        Message.create(
+          channel_id: channel.id,
+          user: 'user',
+          text: 'text',
+          raw: '',
+          created_at: 35.days.ago
+        )
+        expect(channel).to be_inactive
+      end
+    end
+  end
 end

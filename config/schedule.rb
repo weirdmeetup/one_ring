@@ -1,9 +1,13 @@
 # Learn more: http://github.com/javan/whenever
+require File.expand_path(File.dirname(__FILE__) + "/environment")
 
-# every 1.minute, at: '6:30 am' do
-#   runner 'WarningJob.perform_now'
-# end
+env :PATH, ENV['PATH']
+set :output, 'log/cron.log'
 
-# every 1.day, at: '6:40 am' do
-#   runner "AchivingJob.perform_now"
-# end
+every 1.day, at: '09:30 pm' do
+  runner "WarningJob.perform_now"
+end
+
+every 1.day, at: '09:40 pm' do
+  runner "ArchivingJob.perform_now"
+end
