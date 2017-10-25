@@ -52,25 +52,40 @@ describe Channel, type: :model do
         cid: 'cid',
         name: channel_name,
         master: '@user',
-        active: false
+        active: false,
+        archived_at: 10.days.ago
       )
     end
     let(:channel_name) do
       'channel'
     end
-    let(:client) do
-      double('SlackClient')
-    end
+    let(:api_client) { double('SlackApiClient') }
+    let(:bot_client) { double('SlackBotClient') }
 
     before do
-      allow(SlackClient).to receive(:build_api_client).and_return(client)
-      allow(client).to receive(:channels_unarchive)
+      allow(SlackClient).to receive(:build_api_client).and_return(api_client)
+      allow(SlackClient).to receive(:build_bot_client).and_return(bot_client)
+      allow(api_client).to receive(:channels_unarchive)
+      allow(api_client).to receive(:channels_invite)
+      allow(bot_client).to receive(:auth_test).and_return(double(user_id: 'uid'))
+      allow(bot_client).to receive(:chat_postMessage).twice
     end
 
-    it 'unarchive channel' do
-      channel.unarchive
-      expect(channel.active).to eq(true)
-      expect(channel.archived_at).to be_nil
+    context 'with valid condition' do
+      it 'unarchive channel' do
+        channel.unarchive
+        expect(channel.active).to eq(true)
+        expect(channel.archived_at).to be_nil
+      end
+    end
+
+    context 'with empty master' do
+      it 'fails to unarchive channel' do
+        channel.master = nil
+        expect(channel.unarchive).to eq(false)
+        expect(channel.active).to eq(false)
+        expect(channel.archived_at).not_to be_nil
+      end
     end
   end
 

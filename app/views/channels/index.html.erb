@@ -8,7 +8,7 @@
       <th>Name</th>
       <th>Master</th>
       <th>Active</th>
-      <th colspan="3"></th>
+      <th colspan="2"></th>
     </tr>
   </thead>
 
@@ -19,7 +19,13 @@
         <td><%= channel.master %></td>
         <td><%= channel.active %></td>
         <td><%= link_to 'Show', channel %></td>
-        <td><%= link_to 'Archive', channel, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td>
+          <% if channel.active %>
+            <%= link_to 'Archive', channel, method: :delete, data: { confirm: 'Are you sure?' } %>
+          <% else %>
+          <%= link_to 'Unarchive', new_channel_unarchive_path(channel) %>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </tbody>

@@ -1,0 +1,24 @@
+<%= form_with(model: @channel, url: channel_unarchive_path(@channel), method: :post, local: true) do |form| %>
+  <% if @channel.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@channel.errors.count, "error") %> prohibited this channel from being saved:</h2>
+
+      <ul>
+      <% @channel.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <p>Specify Channel master</p>
+
+  <div class="field">
+    <%= form.label :master %>
+    <%= form.text_field :master, placeholder: '@someone' %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit('Unarching Channel') %>
+  </div>
+<% end %>

@@ -20,7 +20,7 @@ class Channel < ApplicationRecord
     cid = api_client.channels_create(name: name).channel.id
     api_client.channels_invite(channel: cid, user: bot_client.auth_test.user_id)
     bot_client.chat_postMessage(channel: cid, text: "<#{master}>님, 요청하신 채널이 생성되었습니다.")
-    bot_client.chat_postMessage(channel: ENV['NOTICE_CHANNEL'], text: "`신규채널` ##{name}")
+    api_client.chat_postMessage(channel: ENV['NOTICE_CHANNEL'], text: "`신규채널` ##{cid}")
     self.cid = cid
     save!
   end
@@ -45,9 +45,15 @@ class Channel < ApplicationRecord
   end
 
   def unarchive
-    client = SlackClient.build_api_client
-    client.channels_unarchive(channel: cid)
-    update(active: true, archived_at: nil)
+    return false if invalid?
+    api_client = SlackClient.build_api_client
+    bot_client = SlackClient.build_bot_client
+    api_client.channels_unarchive(channel: cid)
+    api_client.channels_invite(channel: cid, user: bot_client.auth_test.user_id)
+    bot_client.chat_postMessage(channel: cid, text: "<#{master}>님, 요청하신 채널이 살아났습니다.")
+    api_client.chat_postMessage(channel: ENV['NOTICE_CHANNEL'], text: "`부활채널` ##{cid}")
+
+    update!(active: true, archived_at: nil)
   end
 
   def archive
