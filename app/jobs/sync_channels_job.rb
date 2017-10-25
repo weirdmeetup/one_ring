@@ -5,23 +5,14 @@ class SyncChannelsJob < ApplicationJob
 
   def perform(*args)
     channels.each do |c|
-      if c.is_archived
-        archived = Channel.find_by(cid: c.id)
-        if archived&.active
-          Rails.logger.info "#{c.name}'s status is not synced so let its status archived"
-          archived.update(active: false)
-        else
-          next # ignore archived & un registered
-        end
-      end
-
-      ch = channel(c.id)
+      ch = c.is_archived ? c : channel(c.id)
 
       obj = Channel.find_or_initialize_by(cid: ch.id) do |obj|
         obj.cid = ch.id
-        obj.name = ch.name
-        obj.master = "Nobody"
       end
+      obj.name = ch.name
+      obj.master ||= "Nobody"
+      obj.active = !ch.is_archived
       obj.save
     end
   end
