@@ -44,6 +44,12 @@ class Channel < ApplicationRecord
     !last_message || last_message.created_at < Channel::ACHIVING_LIMIT
   end
 
+  def unarchive
+    client = SlackClient.build_api_client
+    client.channels_unarchive(channel: cid)
+    update(active: true, archived_at: nil)
+  end
+
   def archive
     client = SlackClient.build_api_client
     client.channels_archive(channel: cid)

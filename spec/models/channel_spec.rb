@@ -46,6 +46,34 @@ describe Channel, type: :model do
     end
   end
 
+  describe '#unarchive' do
+    let(:channel) do
+      Channel.create(
+        cid: 'cid',
+        name: channel_name,
+        master: '@user',
+        active: false
+      )
+    end
+    let(:channel_name) do
+      'channel'
+    end
+    let(:client) do
+      double('SlackClient')
+    end
+
+    before do
+      allow(SlackClient).to receive(:build_api_client).and_return(client)
+      allow(client).to receive(:channels_unarchive)
+    end
+
+    it 'unarchive channel' do
+      channel.unarchive
+      expect(channel.active).to eq(true)
+      expect(channel.archived_at).to be_nil
+    end
+  end
+
   describe '#archive' do
     let(:channel) do
       Channel.create(
