@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'slack_client'
 
 describe WarningJob, type: :job do
   let(:job) { described_class.new }

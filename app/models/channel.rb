@@ -1,5 +1,3 @@
-require 'slack_client'
-
 class Channel < ApplicationRecord
   WARNING_LIMIT = 7.days.ago
   ACHIVING_LIMIT = 23.days.ago

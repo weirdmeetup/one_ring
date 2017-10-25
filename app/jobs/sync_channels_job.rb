@@ -1,5 +1,3 @@
-require 'slack_client'
-
 class SyncChannelsJob < ApplicationJob
   queue_as :default
 

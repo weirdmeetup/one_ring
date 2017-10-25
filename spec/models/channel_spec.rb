@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'slack_client'
 
 describe Channel, type: :model do
   describe '.init_with' do
@@ -14,7 +13,8 @@ describe Channel, type: :model do
       allow(api_client).to receive(:channels_create).and_return(resp)
       allow(api_client).to receive(:channels_invite)
       allow(bot_client).to receive(:auth_test).and_return(double(user_id: 'uid'))
-      allow(bot_client).to receive(:chat_postMessage).twice
+      allow(bot_client).to receive(:chat_postMessage)
+      allow(api_client).to receive(:chat_postMessage)
     end
 
     let(:channel) do
@@ -68,7 +68,8 @@ describe Channel, type: :model do
       allow(api_client).to receive(:channels_unarchive)
       allow(api_client).to receive(:channels_invite)
       allow(bot_client).to receive(:auth_test).and_return(double(user_id: 'uid'))
-      allow(bot_client).to receive(:chat_postMessage).twice
+      allow(bot_client).to receive(:chat_postMessage)
+      allow(api_client).to receive(:chat_postMessage)
     end
 
     context 'with valid condition' do
