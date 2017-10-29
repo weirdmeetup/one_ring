@@ -13,6 +13,7 @@ class WarningJob < ApplicationJob
         channel.update(warned_at: Time.zone.now)
         chs.push(channel)
       else
+        # Bot message is not saved. meaning to say, L9 post Message has no affect to check.
         channel.update(warned_at: nil)
       end
     end
