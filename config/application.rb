@@ -16,6 +16,6 @@ module OneRing
     # -- all .rb files in that directory are automatically loaded.
     config.time_zone = 'Seoul'
 
-    config.eager_load_paths << Rails.root.join('lib')
+    config.eager_load_paths << Rails.root.join('lib/autoload')
   end
 end
