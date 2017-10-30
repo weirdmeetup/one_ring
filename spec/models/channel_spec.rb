@@ -18,7 +18,7 @@ describe Channel, type: :model do
     end
 
     let(:channel) do
-      Channel.new(name: 'channel', master: '@master')
+      Channel.new(name: 'channel', master: 'master')
     end
 
     it 'creates channel' do
@@ -51,7 +51,7 @@ describe Channel, type: :model do
       Channel.create(
         cid: 'cid',
         name: channel_name,
-        master: '@user',
+        master: 'user',
         active: false,
         archived_at: 10.days.ago
       )
@@ -95,7 +95,7 @@ describe Channel, type: :model do
       Channel.create(
         cid: 'cid',
         name: channel_name,
-        master: '@user'
+        master: 'user'
       )
     end
     let(:channel_name) do
@@ -122,7 +122,7 @@ describe Channel, type: :model do
       Channel.create(
         cid: 'cid',
         name: 'channel',
-        master: '@user',
+        master: 'user',
         created_at: created_at
       )
     end
@@ -173,7 +173,7 @@ describe Channel, type: :model do
       Channel.create(
         cid: 'cid',
         name: 'channel',
-        master: '@user',
+        master: 'user',
         warned_at: warned_at,
         created_at: created_at
       )

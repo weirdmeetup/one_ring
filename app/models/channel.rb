@@ -12,13 +12,15 @@ class Channel < ApplicationRecord
 
   def save_with_slack
     return false if invalid?
+    master_uid = find_master_uid(master)
+    return false unless master_uid
 
     api_client = SlackClient.build_api_client
     bot_client = SlackClient.build_bot_client
     cid = api_client.channels_create(name: name).channel.id
     api_client.channels_invite(channel: cid, user: bot_client.auth_test.user_id)
-    bot_client.chat_postMessage(channel: cid, text: "<#{master}>님, 요청하신 채널이 생성되었습니다.")
-    api_client.chat_postMessage(channel: ENV['NOTICE_CHANNEL'], text: "`신규채널` ##{cid}")
+    bot_client.chat_postMessage(channel: cid, text: "<@#{master_uid}>님, 요청하신 채널이 생성되었습니다.")
+    api_client.chat_postMessage(channel: ENV['NOTICE_CHANNEL'], text: "`신규채널` <##{cid}>")
     self.cid = cid
     save!
   end
@@ -46,10 +48,13 @@ class Channel < ApplicationRecord
     return false if invalid?
     api_client = SlackClient.build_api_client
     bot_client = SlackClient.build_bot_client
+
+    master_uid = find_master_uid(master)
+    return false unless master_uid
     api_client.channels_unarchive(channel: cid)
     api_client.channels_invite(channel: cid, user: bot_client.auth_test.user_id)
-    bot_client.chat_postMessage(channel: cid, text: "<#{master}>님, 요청하신 채널이 살아났습니다.")
-    api_client.chat_postMessage(channel: ENV['NOTICE_CHANNEL'], text: "`부활채널` ##{cid}")
+    bot_client.chat_postMessage(channel: cid, text: "<@#{master_uid}>님, 요청하신 채널이 살아났습니다.")
+    api_client.chat_postMessage(channel: ENV['NOTICE_CHANNEL'], text: "`부활채널` #<#{cid}>")
 
     update!(active: true, archived_at: nil)
   end
@@ -58,5 +63,14 @@ class Channel < ApplicationRecord
     client = SlackClient.build_api_client
     client.channels_archive(channel: cid)
     update(active: false, archived_at: Time.zone.now)
+  end
+
+  def find_master_uid(name)
+    api_client = SlackClient.build_api_client
+    member = api_client.users_list.members.find do |member|
+      member.profile.display_name == name ||
+        member.profile.display_name_normalized == name
+    end
+    member&.id
   end
 end
