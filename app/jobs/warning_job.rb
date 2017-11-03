@@ -19,7 +19,13 @@ class WarningJob < ApplicationJob
     end
     manage_client.chat_postMessage(channel: '#' + ENV['MANAGE_CHANNEL'], text: build_message(affected_channels), as_user:true)
   rescue => e
-    message = "There was some problem on 'WarningJob' execution\n#{e.message}\n#{e.backtrace.join("\n")}"
+    message = <<~EOS
+    There was some problem on 'WarningJob' execution:
+    Channel which raised error is #{channel.name}(#{channel.cid}).
+    Error Message: #{e.message}
+    Backtrace:
+    #{e.backtrace.join("\n")}
+    EOS
     manage_client.chat_postMessage(channel: '#' + ENV['MANAGE_CHANNEL'], text: message, as_user:true)
   end
 
