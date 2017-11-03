@@ -9,7 +9,7 @@ class WarningJob < ApplicationJob
         if channel.inactive_candidate?
           next if channel.warned_at # Ignore
 
-          bot_client.chat_postMessage(
+          SlackClient.post_msg_as_bot(
             channel: channel.cid,
             text: ":large_blue_circle: 이 채널은 7일 이상 대화가 없습니다. 한 달 이상 대화가 없을 경우 자동으로 아카이빙됩니다."
           )
@@ -21,28 +21,23 @@ class WarningJob < ApplicationJob
         end
 
       rescue => e
-        message = <<~EOS
-          There was some problem on 'WarningJob' execution:
-          Channel which raised error is #{channel.name}(#{channel.cid}).
-          Error Message: #{e.message}
-          Backtrace:
-          #{e.backtrace.join("\n")}
-        EOS
-        manage_client.chat_postMessage(channel: "#" + ENV["MANAGE_CHANNEL"], text: message, as_user: true)
+        SlackClient.post_msg_to_manager(build_error_message(channel, e))
         raise e
       end
     end
-    manage_client.chat_postMessage(channel: "#" + ENV["MANAGE_CHANNEL"], text: build_message(affected_channels), as_user: true)
+    SlackClient.post_msg_to_manager(build_message(affected_channels))
   end
 
   private
 
-  def bot_client
-    @bot_client ||= SlackClient.build_bot_client
-  end
-
-  def manage_client
-    @manage_client ||= SlackClient.build_manage_client
+  def build_error_message(channel, e)
+    message = <<~EOS
+      There was some problem on 'WarningJob' execution:
+      Channel which raised error is #{channel.name}(#{channel.cid}).
+      Error Message: #{e.message}
+      Backtrace:
+      #{e.backtrace.join("\n")}
+    EOS
   end
 
   def build_message(channels)

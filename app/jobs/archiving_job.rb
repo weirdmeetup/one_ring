@@ -8,35 +8,34 @@ class ArchivingJob < ApplicationJob
       next unless channel.inactive?
 
       begin
-        bot_client.chat_postMessage(
+        SlackClient.post_msg_as_bot(
           channel: channel.cid,
           text: ":red_circle: 이 채널은 30일 이상 대화가 없습니다. 여러분 안녕"
         )
         channel.archive
         chs.push(channel)
       rescue => e
-        message = <<~EOS
-          There was some problem on 'ArchivingJob' execution:
-          Channel which raised error is #{channel.name}(#{channel.cid}).
-          Error Message: #{e.message}
-          Backtrace:
-          #{e.backtrace.join("\n")}
-        EOS
-        manage_client.chat_postMessage(channel: "#" + ENV["MANAGE_CHANNEL"], text: message, as_user: true)
+        SlackClient.post_msg_to_manager(build_error_message(channel, e))
         raise e
       end
     end
-    manage_client.chat_postMessage(channel: "#" + ENV["MANAGE_CHANNEL"], text: build_message(affected_channels), as_user: true)
+    SlackClient.post_msg_to_manager(build_message(affected_channels))
   end
 
   private
 
-  def bot_client
-    @bot_client ||= SlackClient.build_bot_client
-  end
-
   def manage_client
     @manage_client ||= SlackClient.build_manage_client
+  end
+
+  def build_error_message(channel, e)
+    message = <<~EOS
+      There was some problem on 'WarningJob' execution:
+      Channel which raised error is #{channel.name}(#{channel.cid}).
+      Error Message: #{e.message}
+      Backtrace:
+      #{e.backtrace.join("\n")}
+    EOS
   end
 
   def build_message(channels)

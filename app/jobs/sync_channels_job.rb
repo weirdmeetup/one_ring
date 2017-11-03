@@ -19,32 +19,24 @@ class SyncChannelsJob < ApplicationJob
 
   private
 
-  def api_client
-    @api_client ||= SlackClient.build_api_client
-  end
-
-  def bot_client
-    @bot_client ||= SlackClient.build_bot_client
-  end
-
   def channels
-    @channels ||= bot_client.channels_list.channels
+    @channels ||= SlackClient.channels_list.channels
   end
 
   def channel(cid)
-    ch = bot_client.channels_info(channel: cid).channel
+    ch = SlackClient.channels_info(channel: cid).channel
     return ch if ch.is_member
     invite_to_channel(cid, ch.name)
 
-    bot_client.channels_info(channel: cid).channel
+    SlackClient.channels_info(channel: cid).channel
   end
 
   def invite_to_channel(cid, cname)
     Rails.logger.info "Bot can't trace #{cname}. Try to invite him"
-    ch_of_user = api_client.channels_info(channel: cid).channel
+    ch_of_user = SlackClient.channels_info(channel: cid).channel
     was_joined = ch_of_user.is_member
-    api_client.channels_join(name: cname) unless was_joined
-    api_client.channels_invite(channel: cid, user: bot_client.auth_test.user_id)
-    api_client.channels_leave(channel: cid) unless was_joined
+    SlackClient.channels_join(name: cname) unless was_joined
+    SlackClient.channels_invite(channel: cid, user: SlackClient.bot_uid)
+    SlackClient.channels_leave(channel: cid) unless was_joined
   end
 end

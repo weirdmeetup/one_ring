@@ -4,24 +4,20 @@ require "rails_helper"
 
 describe Channel, type: :model do
   describe ".init_with" do
-    let(:api_client) { double("SlackApiClient") }
-    let(:bot_client) { double("SlackBotClient") }
     let(:master) { "master" }
 
     before do
-      allow(SlackClient).to receive(:build_api_client).and_return(api_client)
-      allow(SlackClient).to receive(:build_bot_client).and_return(bot_client)
       ch = double(id: "cid")
       resp = double(channel: ch)
-      allow(api_client).to receive(:channels_create).and_return(resp)
-      allow(api_client).to receive(:channels_invite)
-      allow(bot_client).to receive(:auth_test).and_return(double(user_id: "uid"))
-      allow(bot_client).to receive(:chat_postMessage)
-      allow(api_client).to receive(:chat_postMessage)
+      allow(SlackClient).to receive(:channels_create).and_return(resp)
+      allow(SlackClient).to receive(:channels_invite)
+      allow(SlackClient).to receive(:bot_uid).and_return("bot_uid")
+      allow(SlackClient).to receive(:post_msg_as_bot)
+      allow(SlackClient).to receive(:post_msg_via_api)
       members = [
         double(id: "uid", profile: double(display_name: master))
       ]
-      allow(api_client).to receive(:users_list).and_return(double(members: members))
+      allow(SlackClient).to receive(:users_list).and_return(double(members: members))
     end
 
     let(:channel) do
@@ -69,21 +65,17 @@ describe Channel, type: :model do
     let(:master) do
       "master"
     end
-    let(:api_client) { double("SlackApiClient") }
-    let(:bot_client) { double("SlackBotClient") }
 
     before do
-      allow(SlackClient).to receive(:build_api_client).and_return(api_client)
-      allow(SlackClient).to receive(:build_bot_client).and_return(bot_client)
-      allow(api_client).to receive(:channels_unarchive)
-      allow(api_client).to receive(:channels_invite)
-      allow(bot_client).to receive(:auth_test).and_return(double(user_id: "uid"))
-      allow(bot_client).to receive(:chat_postMessage)
-      allow(api_client).to receive(:chat_postMessage)
+      allow(SlackClient).to receive(:channels_unarchive)
+      allow(SlackClient).to receive(:channels_invite)
+      allow(SlackClient).to receive(:bot_uid).and_return("bot_uid")
+      allow(SlackClient).to receive(:post_msg_as_bot)
+      allow(SlackClient).to receive(:post_msg_via_api)
       members = [
         double(id: "uid", profile: double(display_name: master))
       ]
-      allow(api_client).to receive(:users_list).and_return(double(members: members))
+      allow(SlackClient).to receive(:users_list).and_return(double(members: members))
     end
 
     context "with valid condition" do
@@ -120,8 +112,7 @@ describe Channel, type: :model do
     end
 
     before do
-      allow(SlackClient).to receive(:build_api_client).and_return(client)
-      allow(client).to receive(:channels_archive)
+      allow(SlackClient).to receive(:channels_archive)
     end
 
     it "archive channel" do
