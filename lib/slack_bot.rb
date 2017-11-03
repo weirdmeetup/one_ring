@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Slack::RealTime::Client.config do |config|
   # Skip unread counts for each channel.
   config.start_options[:no_unreads] = true
@@ -5,7 +7,7 @@ Slack::RealTime::Client.config do |config|
   config.start_options[:request][:timeout] = 360
 end
 
-client = Slack::RealTime::Client.new(token: ENV['SLACK_BOT_TOKEN'])
+client = Slack::RealTime::Client.new(token: ENV["SLACK_BOT_TOKEN"])
 
 client.on :message do |data|
   next if data.subtype

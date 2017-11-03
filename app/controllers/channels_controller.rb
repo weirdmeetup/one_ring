@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class ChannelsController < ApplicationController
-  before_action :set_channel, only: [:show, :edit, :update, :destroy]
+  before_action :set_channel, only: %i[show edit update destroy]
 
   # GET /channels
   def index
@@ -7,8 +9,7 @@ class ChannelsController < ApplicationController
   end
 
   # GET /channels/1
-  def show
-  end
+  def show; end
 
   # GET /channels/new
   def new
@@ -20,7 +21,7 @@ class ChannelsController < ApplicationController
     @channel = Channel.new(channel_params)
 
     if @channel.save_with_slack
-      redirect_to @channel, notice: 'Channel was successfully created.'
+      redirect_to @channel, notice: "Channel was successfully created."
     else
       render :new
     end
@@ -29,10 +30,11 @@ class ChannelsController < ApplicationController
   # DELETE /channels/1
   def destroy
     @channel.archive
-    redirect_to channels_url, notice: 'Channel was successfully archived.'
+    redirect_to channels_url, notice: "Channel was successfully archived."
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_channel
     @channel = Channel.find(params[:id])

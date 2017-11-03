@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Channel < ApplicationRecord
   WARNING_LIMIT = 7.days.ago
   ACHIVING_LIMIT = 23.days.ago
@@ -5,7 +7,7 @@ class Channel < ApplicationRecord
   has_many :messages
 
   scope :alive, -> { where(active: true) }
-  scope :achiving_candidate, -> { alive.where('warned_at < ?', Channel::ACHIVING_LIMIT) }
+  scope :achiving_candidate, -> { alive.where("warned_at < ?", Channel::ACHIVING_LIMIT) }
 
   validates :name, presence: true, uniqueness: true
   validates :master, presence: true
@@ -20,7 +22,7 @@ class Channel < ApplicationRecord
     cid = api_client.channels_create(name: name).channel.id
     api_client.channels_invite(channel: cid, user: bot_client.auth_test.user_id)
     bot_client.chat_postMessage(channel: cid, text: "<@#{master_uid}>님, 요청하신 채널이 생성되었습니다.")
-    api_client.chat_postMessage(channel: ENV['NOTICE_CHANNEL'], text: "`신규채널` <##{cid}>")
+    api_client.chat_postMessage(channel: ENV["NOTICE_CHANNEL"], text: "`신규채널` <##{cid}>")
     self.cid = cid
     save!
   end
@@ -30,7 +32,7 @@ class Channel < ApplicationRecord
   end
 
   def default_channel?
-    name.start_with?('_')
+    name.start_with?("_")
   end
 
   def inactive_candidate?
@@ -54,7 +56,7 @@ class Channel < ApplicationRecord
     api_client.channels_unarchive(channel: cid)
     api_client.channels_invite(channel: cid, user: bot_client.auth_test.user_id)
     bot_client.chat_postMessage(channel: cid, text: "<@#{master_uid}>님, 요청하신 채널이 살아났습니다.")
-    api_client.chat_postMessage(channel: ENV['NOTICE_CHANNEL'], text: "`부활채널` #<#{cid}>")
+    api_client.chat_postMessage(channel: ENV["NOTICE_CHANNEL"], text: "`부활채널` #<#{cid}>")
 
     update!(active: true, archived_at: nil)
   end

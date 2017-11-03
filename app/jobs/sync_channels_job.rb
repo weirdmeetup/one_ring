@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class SyncChannelsJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
+  def perform(*_args)
     channels.each do |c|
       ch = c.is_archived ? c : channel(c.id)
 
