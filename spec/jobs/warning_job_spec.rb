@@ -6,12 +6,13 @@ describe WarningJob, type: :job do
   let(:job) { described_class.new }
   let(:channel_name) { "channel" }
   let(:warned_at) { nil }
+  let(:active) { true }
   let!(:channel) do
     Channel.create(
       cid: "cid",
       name: channel_name,
       master: "@user",
-      active: "true",
+      active: active,
       warned_at: warned_at,
       created_at: 10.days.ago
     )
@@ -44,6 +45,15 @@ describe WarningJob, type: :job do
       let(:warned_at) { 2.days.ago }
 
       it "reset warned_at" do
+        job.perform
+        expect(channel.reload.warned_at).to be_nil
+      end
+    end
+
+    context "with archived channel" do
+      let(:active) { false }
+
+      it "skips" do
         job.perform
         expect(channel.reload.warned_at).to be_nil
       end

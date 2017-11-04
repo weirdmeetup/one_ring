@@ -24,10 +24,6 @@ class ArchivingJob < ApplicationJob
 
   private
 
-  def manage_client
-    @manage_client ||= SlackClient.build_manage_client
-  end
-
   def build_error_message(channel, e)
     message = <<~EOS
       There was some problem on 'WarningJob' execution:
