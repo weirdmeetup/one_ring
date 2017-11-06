@@ -8,6 +8,7 @@
       <th>Name</th>
       <th>Master</th>
       <th>Active</th>
+      <th>Warned At</th>
       <th colspan="2"></th>
     </tr>
   </thead>
@@ -18,6 +19,7 @@
         <td><%= channel.name %></td>
         <td><%= channel.master %></td>
         <td><%= channel.active %></td>
+        <td><%= channel.warned_at&.strftime('%m/%d %T') %></td>
         <td><%= link_to 'Show', channel %></td>
         <td>
           <% if channel.active %>
