@@ -9,7 +9,9 @@ class ChannelsController < ApplicationController
   end
 
   # GET /channels/1
-  def show; end
+  def show
+    @messages = @channel.messages.last(10)
+  end
 
   # GET /channels/new
   def new

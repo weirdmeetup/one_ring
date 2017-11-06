@@ -15,4 +15,10 @@
   <%= @channel.master %>
 </p>
 
+<ul>
+  <% @messages.each do |message| %>
+    <li><%= "#{message.created_at.strftime('%m/%d %T')} #{message.user}: #{message.text}"%></li>
+  <% end %>
+</ul>
+
 <%= link_to 'Back', channels_path %>
