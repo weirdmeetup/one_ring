@@ -15,7 +15,10 @@ class Channel < ApplicationRecord
   def save_with_slack
     return false if invalid?
     master_uid = find_master_uid(master)
-    return false unless master_uid
+    unless master_uid
+      errors[:master] << "uid is not found"
+      return false
+    end
 
     cid = SlackClient.channels_create(name: name).channel.id
     SlackClient.channels_invite(channel: cid, user: SlackClient.bot_uid)
@@ -70,7 +73,9 @@ class Channel < ApplicationRecord
   def find_master_uid(name)
     member = SlackClient.users_list.members.find do |member|
       member.profile.display_name == name ||
-        member.profile.display_name_normalized == name
+        member.profile.display_name_normalized == name ||
+        member.profile.real_name_normalized ||
+        member.profile.real_name
     end
     member&.id
   end
