@@ -12,12 +12,13 @@ module SlackClient
     api_client.chat_postMessage(args)
   end
 
-  %w(
+  %w[
     channels_create channels_invite
     channels_archive channels_unarchive
     channels_join channels_leave
+    channels_history
     users_list
-  ).each do |method_name|
+  ].each do |method_name|
     define_method(method_name) do |*args|
       api_client.send(method_name, *args)
     end
@@ -36,7 +37,7 @@ module SlackClient
     bot_client.auth_test.user_id
   end
 
-  %w(channels_info channels_list).each do |method_name|
+  %w[channels_info channels_list].each do |method_name|
     define_method(method_name) do |*args|
       bot_client.send(method_name, *args)
     end

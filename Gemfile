@@ -41,6 +41,8 @@ gem "whenever", require: false
 
 gem "omniauth-slack_signin"
 
+gem "activerecord-import"
+
 gem "listen", ">= 3.0.5", "< 3.2"
 
 group :development, :test do

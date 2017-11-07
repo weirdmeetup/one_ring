@@ -29,7 +29,7 @@ class Channel < ApplicationRecord
   end
 
   def last_message
-    messages.order(id: :desc).first
+    messages.order(created_at: :desc).first
   end
 
   def default_channel?

@@ -19,7 +19,6 @@ class WarningJob < ApplicationJob
           # Bot message is not saved. meaning to say, L9 post Message has no affect to check.
           channel.update(warned_at: nil)
         end
-
       rescue => e
         SlackClient.post_msg_to_manager(build_error_message(channel, e))
         raise e

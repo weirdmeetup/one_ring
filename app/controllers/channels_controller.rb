@@ -5,12 +5,12 @@ class ChannelsController < ApplicationController
 
   # GET /channels
   def index
-    @channels = Channel.all
+    @channels = Channel.order(active: :desc).all
   end
 
   # GET /channels/1
   def show
-    @messages = @channel.messages.last(10)
+    @messages = @channel.messages.recent.limit(10)
   end
 
   # GET /channels/new
