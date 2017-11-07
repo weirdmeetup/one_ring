@@ -24,6 +24,16 @@ module SlackClient
     end
   end
 
+  def find_user(name)
+    member = users_list.members.find do |member|
+      member.profile.display_name == name ||
+        member.profile.display_name_normalized == name ||
+        member.profile.real_name_normalized == name ||
+        member.profile.real_name == name
+    end
+    member
+  end
+
   def bot_client
     @bot_client ||= Slack::Web::Client.new(token: ENV["SLACK_BOT_TOKEN"])
   end

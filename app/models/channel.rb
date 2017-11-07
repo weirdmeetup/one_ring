@@ -14,7 +14,7 @@ class Channel < ApplicationRecord
 
   def save_with_slack
     return false if invalid?
-    master_uid = find_master_uid(master)
+    master_uid = SlackClient.find_user(master)&.id
     unless master_uid
       errors[:master] << "uid is not found"
       return false
@@ -55,7 +55,7 @@ class Channel < ApplicationRecord
   def unarchive
     return false if invalid?
 
-    master_uid = find_master_uid(master)
+    master_uid = SlackClient.find_user(master)&.id
     return false unless master_uid
     SlackClient.channels_unarchive(channel: cid)
     SlackClient.channels_invite(channel: cid, user: SlackClient.bot_uid)
@@ -68,15 +68,5 @@ class Channel < ApplicationRecord
   def archive
     SlackClient.channels_archive(channel: cid)
     update(active: false, archived_at: Time.zone.now)
-  end
-
-  def find_master_uid(name)
-    member = SlackClient.users_list.members.find do |member|
-      member.profile.display_name == name ||
-        member.profile.display_name_normalized == name ||
-        member.profile.real_name_normalized ||
-        member.profile.real_name
-    end
-    member&.id
   end
 end
