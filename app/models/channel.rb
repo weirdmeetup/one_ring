@@ -22,6 +22,7 @@ class Channel < ApplicationRecord
 
     cid = SlackClient.channels_create(name: name).channel.id
     SlackClient.channels_invite(channel: cid, user: SlackClient.bot_uid)
+    SlackClient.channels_leave(channel: cid)
     SlackClient.post_msg_as_bot(
       channel: cid,
       text: "<@#{master_uid}>님, 요청하신 채널이 생성되었습니다."
@@ -59,6 +60,7 @@ class Channel < ApplicationRecord
     return false unless master_uid
     SlackClient.channels_unarchive(channel: cid)
     SlackClient.channels_invite(channel: cid, user: SlackClient.bot_uid)
+    SlackClient.channels_leave(channel: cid)
     SlackClient.post_msg_as_bot(channel: cid, text: "<@#{master_uid}>님, 요청하신 채널이 살아났습니다.")
     SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: "`부활채널` #<#{cid}>")
 

@@ -11,6 +11,7 @@ describe Channel, type: :model do
       resp = double(channel: ch)
       allow(SlackClient).to receive(:channels_create).and_return(resp)
       allow(SlackClient).to receive(:channels_invite)
+      allow(SlackClient).to receive(:channels_leave)
       allow(SlackClient).to receive(:bot_uid).and_return("bot_uid")
       allow(SlackClient).to receive(:post_msg_as_bot)
       allow(SlackClient).to receive(:post_msg_via_api)
@@ -69,6 +70,7 @@ describe Channel, type: :model do
     before do
       allow(SlackClient).to receive(:channels_unarchive)
       allow(SlackClient).to receive(:channels_invite)
+      allow(SlackClient).to receive(:channels_leave)
       allow(SlackClient).to receive(:bot_uid).and_return("bot_uid")
       allow(SlackClient).to receive(:post_msg_as_bot)
       allow(SlackClient).to receive(:post_msg_via_api)
