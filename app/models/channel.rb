@@ -28,6 +28,7 @@ class Channel < ApplicationRecord
       text: "<@#{master_uid}>님, 요청하신 채널이 생성되었습니다."
     )
     SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: "`신규채널` <##{cid}>")
+    SlackClient.post_msg_via_api(channel: ENV["CHANNEL_CHANNEL"], text: "`신규채널` <##{cid}>")
     self.cid = cid
     save!
   end
