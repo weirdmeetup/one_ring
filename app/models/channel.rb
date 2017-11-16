@@ -37,6 +37,11 @@ class Channel < ApplicationRecord
     messages.order(created_at: :desc).first
   end
 
+  def days_from_last_message
+    last_time = messages.order(created_at: :desc).first&.created_at || created_at
+    ((Time.zone.now - last_time) / 86_400).to_i
+  end
+
   def default_channel?
     name.start_with?("_")
   end
