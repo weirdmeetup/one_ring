@@ -10,13 +10,13 @@ every 1.day, at: "09:20 pm" do
   runner "SyncChannelsJob.perform_now"
 end
 
-every 1.day, at: "09:30 pm" do
-  runner "WarningJob.perform_now"
-end
-
-every 1.day, at: "09:40 pm" do
-  runner "ArchivingJob.perform_now"
-end
+# every 1.day, at: "09:30 pm" do
+#   runner "WarningJob.perform_now"
+# end
+#
+# every 1.day, at: "09:40 pm" do
+#   runner "ArchivingJob.perform_now"
+# end
 
 every 5.minutes do
   runner "SyncMessagesJob.perform_now"
