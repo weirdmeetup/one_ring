@@ -14,9 +14,9 @@ class Channel < ApplicationRecord
 
   def save_with_slack
     return false if invalid?
-    master_uid = SlackClient.find_user(master)&.id
-    unless master_uid
-      errors[:master] << "uid is not found"
+    user = SlackClient.users_info(user: master)
+    unless user
+      errors[:master] << "uid is not valid"
       return false
     end
 
@@ -25,7 +25,7 @@ class Channel < ApplicationRecord
     SlackClient.channels_leave(channel: cid)
     SlackClient.post_msg_as_bot(
       channel: cid,
-      text: "<@#{master_uid}>님, 요청하신 채널이 생성되었습니다."
+      text: "<@#{master}>님, 요청하신 채널이 생성되었습니다."
     )
     SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: "`신규채널` <##{cid}>")
     SlackClient.post_msg_via_api(channel: ENV["CHANNEL_CHANNEL"], text: "`신규채널` <##{cid}>")
@@ -62,12 +62,12 @@ class Channel < ApplicationRecord
   def unarchive
     return false if invalid?
 
-    master_uid = SlackClient.find_user(master)&.id
-    return false unless master_uid
+    user = SlackClient.users_info(user: master)
+    return false unless user
     SlackClient.channels_unarchive(channel: cid)
     SlackClient.channels_invite(channel: cid, user: SlackClient.bot_uid)
     SlackClient.channels_leave(channel: cid)
-    SlackClient.post_msg_as_bot(channel: cid, text: "<@#{master_uid}>님, 요청하신 채널이 살아났습니다.")
+    SlackClient.post_msg_as_bot(channel: cid, text: "<@#{master}>님, 요청하신 채널이 살아났습니다.")
     SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: "`부활채널` #<#{cid}>")
 
     update!(active: true, archived_at: nil)

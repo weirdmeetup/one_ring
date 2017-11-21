@@ -17,21 +17,11 @@ module SlackClient
     channels_archive channels_unarchive
     channels_join channels_leave
     channels_history
-    users_list
+    users_info
   ].each do |method_name|
     define_method(method_name) do |*args|
       api_client.send(method_name, *args)
     end
-  end
-
-  def find_user(name)
-    member = users_list.members.find do |member|
-      member.profile.display_name == name ||
-        member.profile.display_name_normalized == name ||
-        member.profile.real_name_normalized == name ||
-        member.profile.real_name == name
-    end
-    member
   end
 
   def bot_client
