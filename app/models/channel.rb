@@ -68,7 +68,8 @@ class Channel < ApplicationRecord
     SlackClient.channels_invite(channel: cid, user: SlackClient.bot_uid)
     SlackClient.channels_leave(channel: cid)
     SlackClient.post_msg_as_bot(channel: cid, text: "<@#{master}>님, 요청하신 채널이 살아났습니다.")
-    SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: "`부활채널` #<#{cid}>")
+    SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: "`부활채널` <##{cid}>")
+    SlackClient.post_msg_via_api(channel: ENV["CHANNEL_CHANNEL"], text: "`부활채널` <##{cid}>")
 
     update!(active: true, archived_at: nil)
   end
