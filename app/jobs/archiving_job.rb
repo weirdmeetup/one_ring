@@ -17,7 +17,9 @@ class ArchivingJob < ApplicationJob
       end
     end
     SlackClient.post_msg_to_manager(build_message(affected_channels))
-    SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: "RIP: #{affected_channels.map(&:name).join(', ')}")
+    if affected_channels.size > 0
+      SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: build_message_for_public(affected_channels))
+    end
   end
 
   private
@@ -41,5 +43,10 @@ class ArchivingJob < ApplicationJob
     else
       "ArchivingJob performed result: no affected channel"
     end
+  end
+
+  def build_message_for_public(channels)
+    names = affected_channels.map { |channel| "##{channel.name}" }.join(', ')
+    "Channel RIP: #{names}"
   end
 end
