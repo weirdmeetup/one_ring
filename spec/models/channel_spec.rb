@@ -109,6 +109,7 @@ describe Channel, type: :model do
 
     before do
       allow(SlackClient).to receive(:channels_archive)
+      allow(SlackClient).to receive(:post_msg_as_bot)
     end
 
     it "archive channel" do
@@ -129,100 +130,92 @@ describe Channel, type: :model do
     end
     let(:created_at) { nil }
 
-    context "with no messages" do
-      let(:created_at) { 8.days.ago }
-
-      it "returns true" do
-        expect(channel).to be_inactive_candidate
-      end
-    end
-
-    context "with last message created 8 day" do
-      let(:created_at) { 8.days.ago }
-
-      it "returns true" do
-        Message.create(
-          channel_id: channel.id,
-          user: "user",
-          text: "text",
-          raw: "",
-          created_at: 8.days.ago
-        )
-        expect(channel).to be_inactive_candidate
-      end
-    end
-
-    context "with created in 7 days" do
-      let(:created_at) { 4.days.ago }
-
-      it "returns false" do
-        expect(channel).not_to be_inactive_candidate
-      end
-    end
-
-    context "with default channels" do
-      let(:channel_name) { "_general" }
-
-      it "returns true" do
-        expect(channel).not_to be_inactive_candidate
-      end
-    end
   end
 
-  describe "#inactive?" do
+  describe "#inactive_candidate?" do
     let(:channel) do
       Channel.create(
         cid: "cid",
-        name: "channel",
+        name: channel_name,
         master: "user",
-        warned_at: warned_at,
-        created_at: created_at
+        created_at: created_at,
+        active: active
       )
     end
-    let(:warned_at) { nil }
-    let(:created_at) { nil }
 
-    context "with active channel" do
+    let(:active) { true }
+    let(:channel_name) { "general" }
+    let(:created_at) { 20.days.ago }
+
+    context "with inactive channel" do
+      let(:active) { false }
+
       it "returns false" do
-        expect(channel).not_to be_inactive
+        expect(channel).not_to be_inactive_candidate
       end
     end
 
-    context "with warned & has message in 20 days channel" do
-      let(:warned_at) { 13.days.ago }
+    context "with default channel" do
+      let(:channel_name) { "_general" }
 
+      it "returns false" do
+        expect(channel).not_to be_inactive_candidate
+      end
+    end
+
+    context "with created in 14 days" do
+      let(:created_at) { 13.days.ago }
+
+      it "returns false" do
+        expect(channel).not_to be_inactive_candidate
+      end
+    end
+
+    context "with no messages" do
       it "returns true" do
+        expect(channel).to be_inactive_candidate
+      end
+    end
+
+    context "with last message" do
+      let(:message) do
         Message.create(
           channel_id: channel.id,
           user: "user",
           text: "text",
           raw: "",
-          created_at: 20.days.ago
+          created_at: message_sent_at
         )
-        expect(channel).not_to be_inactive
       end
-    end
 
-    context "with warned & has no messages in 30 days channel" do
-      let(:warned_at) { 23.days.ago }
+      context "sent 10 days ago" do
+        let(:message_sent_at) { 10.days.ago }
 
-      it "returns true" do
-        expect(channel).to be_inactive
+        it "returns true" do
+          Message.create(
+            channel_id: channel.id,
+            user: "user",
+            text: "text",
+            raw: "",
+            created_at: message_sent_at
+          )
+          expect(channel).not_to be_inactive_candidate
+        end
       end
-    end
 
-    context "with warned & has message in 35 days channel" do
-      let(:warned_at) { 29.days.ago }
+      context "sent 15 days ago" do
+        let(:message_sent_at) { 15.days.ago }
 
-      it "returns true" do
-        Message.create(
-          channel_id: channel.id,
-          user: "user",
-          text: "text",
-          raw: "",
-          created_at: 35.days.ago
-        )
-        expect(channel).to be_inactive
+        it "returns true" do
+          Message.create(
+            channel_id: channel.id,
+            user: "user",
+            text: "text",
+            raw: "",
+            created_at: message_sent_at
+          )
+          expect(channel).to be_inactive_candidate
+        end
       end
     end
   end

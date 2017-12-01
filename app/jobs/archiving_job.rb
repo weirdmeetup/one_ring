@@ -4,22 +4,20 @@ class ArchivingJob < ApplicationJob
   queue_as :default
 
   def perform(*_args)
-    affected_channels = Channel.achiving_candidate.each_with_object([]) do |channel, chs|
-      next unless channel.inactive?
+    affected_channels = []
+    Channel.find_each do |channel|
+      next unless channel.inactive_candidate?
 
       begin
-        SlackClient.post_msg_as_bot(
-          channel: channel.cid,
-          text: ":red_circle: 이 채널은 30일 이상 대화가 없습니다. 여러분 안녕"
-        )
         channel.archive
-        chs.push(channel)
+        affected_channels.push(channel)
       rescue => e
         SlackClient.post_msg_to_manager(build_error_message(channel, e))
         raise e
       end
     end
     SlackClient.post_msg_to_manager(build_message(affected_channels))
+    SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: "RIP: #{affected_channels.map(&:name).join(', ')}")
   end
 
   private

@@ -2,12 +2,11 @@
 
 class Channel < ApplicationRecord
   WARNING_LIMIT = 7.days.ago
-  ACHIVING_LIMIT = 23.days.ago
+  ACHIVING_LIMIT = 14.days.ago
 
   has_many :messages
 
   scope :alive, -> { where(active: true) }
-  scope :achiving_candidate, -> { alive.where("warned_at < ?", Channel::ACHIVING_LIMIT) }
 
   validates :name, presence: true, uniqueness: true
   validates :master, presence: true
@@ -49,14 +48,8 @@ class Channel < ApplicationRecord
   def inactive_candidate?
     return false unless active
     return false if default_channel?
-    return false if created_at > 7.days.ago
-    !last_message || last_message.created_at < Channel::WARNING_LIMIT
-  end
-
-  def inactive?
-    return false unless active
-    return false if warned_at.nil?
-    !last_message || last_message.created_at < Channel::ACHIVING_LIMIT
+    return false if created_at > ACHIVING_LIMIT
+    !last_message || last_message.created_at < ACHIVING_LIMIT
   end
 
   def unarchive
@@ -75,6 +68,7 @@ class Channel < ApplicationRecord
   end
 
   def archive
+    SlackClient.post_msg_as_bot(channel: cid, text: ":red_circle: 이 채널은 14일 이상 대화가 없었네요. 여러분 안녕")
     SlackClient.channels_archive(channel: cid)
     update(active: false, archived_at: Time.zone.now)
   end
