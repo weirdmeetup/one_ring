@@ -46,7 +46,7 @@ class ArchivingJob < ApplicationJob
   end
 
   def build_message_for_public(channels)
-    names = affected_channels.map { |channel| "##{channel.name}" }.join(', ')
+    names = channels.map { |channel| "##{channel.name}" }.join(', ')
     "Channel RIP: #{names}"
   end
 end
