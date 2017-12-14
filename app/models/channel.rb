@@ -2,7 +2,7 @@
 
 class Channel < ApplicationRecord
   WARNING_LIMIT = 7.days.ago
-  ACHIVING_LIMIT = 14.days.ago
+  ACHIVING_LIMIT = 15.days.ago
 
   has_many :messages
 
