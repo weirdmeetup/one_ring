@@ -15,7 +15,7 @@ describe Channel, type: :model do
       allow(SlackClient).to receive(:bot_uid).and_return("bot_uid")
       allow(SlackClient).to receive(:post_msg_as_bot)
       allow(SlackClient).to receive(:post_msg_via_api)
-      allow(SlackClient).to receive(:users_info).and_return(double(id: 'uid'))
+      allow(SlackClient).to receive(:users_info).and_return(double(id: "uid"))
     end
 
     let(:channel) do
@@ -71,7 +71,7 @@ describe Channel, type: :model do
       allow(SlackClient).to receive(:bot_uid).and_return("bot_uid")
       allow(SlackClient).to receive(:post_msg_as_bot)
       allow(SlackClient).to receive(:post_msg_via_api)
-      allow(SlackClient).to receive(:users_info).and_return(double(id: 'uid'))
+      allow(SlackClient).to receive(:users_info).and_return(double(id: "uid"))
     end
 
     context "with valid condition" do
@@ -129,7 +129,6 @@ describe Channel, type: :model do
       )
     end
     let(:created_at) { nil }
-
   end
 
   describe "#inactive_candidate?" do
