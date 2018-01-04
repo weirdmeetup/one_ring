@@ -1,0 +1,17 @@
+<h2>Unique user(based on message)</h2>
+<ul>
+  <li>in a month: <%= uu_in_a_month %></li>
+  <li>in a week: <%= uu_in_a_week %></li>
+</ul>
+
+<h2>Messages in a month</h2>
+<ul>
+  <li>per day(avg): <%= msg_per_day %></li>
+</ul>
+
+<h2>20 Most active channel ranking in a month</h2>
+<ul>
+  <% channel_rank.each_with_index do |message, idx| %>
+    <li><%= idx + 1 %>. <%= message.channel_name %>(<%= message.count %>)</li>
+  <% end %>
+</ul>
