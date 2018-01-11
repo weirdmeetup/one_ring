@@ -5,8 +5,12 @@ class ArchivingJob < ApplicationJob
 
   def perform(*_args)
     affected_channels = []
+    affected_channels_tomorrow = []
     Channel.find_each do |channel|
-      next unless channel.inactive_candidate?
+      unless channel.inactive_candidate?
+        affected_channels_tomorrow.push channel if channel.inactive_candidate_tomorrow?
+        next
+      end
 
       begin
         channel.archive
@@ -16,7 +20,7 @@ class ArchivingJob < ApplicationJob
         raise e
       end
     end
-    SlackClient.post_msg_to_manager(build_message(affected_channels))
+    SlackClient.post_msg_to_manager(build_message(affected_channels, affected_channels_tomorrow))
     if affected_channels.size > 0
       SlackClient.post_msg_via_api(channel: ENV["NOTICE_CHANNEL"], text: build_message_for_public(affected_channels))
     end
@@ -34,15 +38,20 @@ class ArchivingJob < ApplicationJob
     EOS
   end
 
-  def build_message(channels)
-    if !channels.empty?
-      message = <<~EOS
-        WarningJob performed result:
-        Affected Channel(#{channels.size}) => #{channels.map(&:name).join(', ')}
-      EOS
-    else
-      "ArchivingJob performed result: no affected channel"
+  def build_message(channels, channels_tomorrow)
+    message = \
+      if !channels.empty?
+        message = <<~EOS
+          WarningJob performed result:
+          Affected Channel(#{channels.size}) => #{channels.map(&:name).join(', ')}
+        EOS
+      else
+        "ArchivingJob performed result: no affected channel"
+      end
+    unless channels_tomorrow.empty?
+      message += "\nProtip: #{channels_tomorrow.map(&:name).join(', ')} may be archived."
     end
+    message
   end
 
   def build_message_for_public(channels)

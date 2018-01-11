@@ -45,6 +45,14 @@ class Channel < ApplicationRecord
     name.start_with?("_")
   end
 
+  def inactive_candidate_tomorrow?
+    return false unless active
+    return false if default_channel?
+    next_day = ACHIVING_LIMIT - 1.day
+    return false if created_at > next_day
+    !last_message || last_message.created_at < next_day
+  end
+
   def inactive_candidate?
     return false unless active
     return false if default_channel?
