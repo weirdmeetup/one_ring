@@ -30,7 +30,7 @@ class ArchivingJob < ApplicationJob
 
   def build_error_message(channel, e)
     message = <<~EOS
-      There was some problem on 'WarningJob' execution:
+      There was some problem on 'ArchivingJob' execution:
       Channel which raised error is #{channel.name}(#{channel.cid}).
       Error Message: #{e.message}
       Backtrace:
@@ -42,7 +42,7 @@ class ArchivingJob < ApplicationJob
     message = \
       if !channels.empty?
         message = <<~EOS
-          WarningJob performed result:
+          ArchivingJob performed result:
           Affected Channel(#{channels.size}) => #{channels.map(&:name).join(', ')}
         EOS
       else
