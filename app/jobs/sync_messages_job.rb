@@ -7,6 +7,9 @@ class SyncMessagesJob < ApplicationJob
     Channel.alive.each do |channel|
       sync_messages(channel)
     end
+  rescue => e
+    SlackClient.post_msg_to_manager(build_error_message(channel, e))
+    raise e
   end
 
   private
@@ -40,5 +43,15 @@ class SyncMessagesJob < ApplicationJob
 
   def build_message(channel, data)
     Message.new(user: data.user, text: data.text, channel: channel, created_at: Time.zone.at(data.ts.to_f), raw: data.to_json)
+  end
+
+  def build_error_message(channel, e)
+    message = <<~EOS
+      There was some problem on 'ArchivingJob' execution:
+      Channel which raised error is #{channel.name}(#{channel.cid}).
+      Error Message: #{e.message}
+      Backtrace:
+      #{e.backtrace.join("\n")}
+    EOS
   end
 end

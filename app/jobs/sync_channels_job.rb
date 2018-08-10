@@ -15,6 +15,7 @@ class SyncChannelsJob < ApplicationJob
       obj.active = !ch.is_archived
       obj.save
     end
+    SlackClient.post_msg_to_manager("Sync channels is finished.")
   end
 
   private
