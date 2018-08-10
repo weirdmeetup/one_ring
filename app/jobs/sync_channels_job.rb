@@ -36,7 +36,20 @@ class SyncChannelsJob < ApplicationJob
     ch_of_user = SlackClient.channels_info(channel: cid).channel
     was_joined = ch_of_user.is_member
     SlackClient.channels_join(name: cname) unless was_joined
-    SlackClient.channels_invite(channel: cid, user: SlackClient.bot_uid)
-    SlackClient.channels_leave(channel: cid) unless was_joined
+    SlackClient.channels_invite(channel: cid, user: bot_uid)
+  rescue Slack::Web::Api::Errors::SlackError => e
+    if e.message == 'already_in_channel'
+      # Do nothing
+    else
+      raise e
+    end
+  ensure
+    unless ch_of_user.is_general || was_joined
+      SlackClient.channels_leave(channel: cid)
+    end
+  end
+
+  def bot_uid
+    @bot_uid ||= SlackClient.bot_uid
   end
 end
