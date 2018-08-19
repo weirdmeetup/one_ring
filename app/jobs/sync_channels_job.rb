@@ -4,8 +4,12 @@ class SyncChannelsJob < ApplicationJob
   queue_as :default
 
   def perform(*_args)
-    channels.each do |c|
-      ch = c.is_archived ? c : channel(c.id)
+    channels.each do |ch|
+      next if ch.is_archived
+
+      unless ch.is_member
+        invite_to_channel(ch.id, ch.name)
+      end
 
       obj = Channel.find_or_initialize_by(cid: ch.id) do |obj|
         obj.cid = ch.id
@@ -22,14 +26,6 @@ class SyncChannelsJob < ApplicationJob
 
   def channels
     @channels ||= SlackClient.channels_list.channels
-  end
-
-  def channel(cid)
-    ch = SlackClient.channels_info(channel: cid).channel
-    return ch if ch.is_member
-    invite_to_channel(cid, ch.name)
-
-    SlackClient.channels_info(channel: cid).channel
   end
 
   def invite_to_channel(cid, cname)
